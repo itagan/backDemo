@@ -1,10 +1,10 @@
 <template>
-  <div class="">aaaa</div>
+  <div class="">home</div>
 </template>
 
 <script>
   export default {
-    name: 'aa.vue'
+    name: 'home.vue'
   }
 </script>
 
