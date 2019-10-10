@@ -20,6 +20,7 @@
       <el-aside width="200px" class="aside">
         <el-menu
           :unique-opened="true"
+          :router="true"
         >
 <!--          el-submenu是一个导航组，里面分上下，上面标题等，下面是具体选项-->
 <!--          el-submenu index如果是一样的话，那么点开一个，其它也会展开的-->
@@ -28,7 +29,7 @@
               <i class="el-icon-location"></i>
               <span>用户管理</span>
             </template>
-                <el-menu-item index="1-1">
+                <el-menu-item index="users">
                   <i class="el-icon-location"></i>
                   <span>用户列表</span>
                 </el-menu-item>
@@ -92,7 +93,10 @@
         </el-menu>
       </el-aside>
 
-      <el-main class="main">Main</el-main>
+      <el-main class="main">
+        <router-view></router-view>
+      </el-main>
+
     </el-container>
   </el-container>
 </template>
