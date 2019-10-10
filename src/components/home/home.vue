@@ -11,7 +11,7 @@
             <h2>电商后台管理系统</h2>
         </el-col>
         <el-col :span="2"><div class="grid-content bg-purple">
-          <a href="#" class="loginout">退出</a>
+          <a href="#" class="loginout" @click.prevent="handleSignout()">退出</a>
         </div></el-col>
       </el-row>
     </el-header>
@@ -105,6 +105,16 @@
       const token = localStorage.getItem('token')
       if(!token) {
         //token没有 =》回到登录
+        this.$router.push({name:'login'})
+      }
+    },
+    methods: {
+      handleSignout() {
+        //清除token
+        localStorage.clear()
+        //提示
+        this.$message.success('退出成功')
+        //来到登录页面
         this.$router.push({name:'login'})
       }
     }
