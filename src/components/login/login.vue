@@ -31,15 +31,36 @@
     },
     methods: {
       //登录请求
-      handleLogin() {
-        this.$http.post('login',this.formdata).then(res => {
-          console.log(res)
+      // handleLogin() {
+      //   this.$http.post('login',this.formdata).then(res => {
+      //     console.log(res)
+      //     const {
+      //       data,
+      //       meta:{msg,status}
+      //     } = res.data
+      //     // console.log(data)
+      //     // console.log(msg)
+      //     if(status === 200) {
+      //       //登录成功 跳转页面
+      //       this.$router.push({name:'home'})
+      //       //提示成功
+      //       this.$message.success(msg);
+      //     }else  {
+      //       this.$message.warning(msg);
+      //     }
+      //   })
+      // }
+
+      //用ES7 async await让异步代码看起来同步一样，函数前加async
+     async handleLogin() {
+       //找到异步操作有结果的代码前面加await  同时接受异步操作的结果
+       //找到距离异步操作有结果的代码最近的方法， 前面加上async
+        const res = await this.$http.post('login',this.formdata)
+
           const {
             data,
             meta:{msg,status}
           } = res.data
-          // console.log(data)
-          // console.log(msg)
           if(status === 200) {
             //登录成功 跳转页面
             this.$router.push({name:'home'})
@@ -48,7 +69,7 @@
           }else  {
             this.$message.warning(msg);
           }
-        })
+
       }
     }
   }
