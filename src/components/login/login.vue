@@ -2,7 +2,6 @@
   <div class="login-wrap">
     <el-form
       class="login-form"
-      :label-position="top"
       label-width="80px"
       :model="formdata">
       <h2>用户登录</h2>
