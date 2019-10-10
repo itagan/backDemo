@@ -56,7 +56,7 @@
        //找到异步操作有结果的代码前面加await  同时接受异步操作的结果
        //找到距离异步操作有结果的代码最近的方法， 前面加上async
         const res = await this.$http.post('login',this.formdata)
-
+       console.log(res)
           const {
             data,
             meta:{msg,status}

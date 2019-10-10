@@ -99,7 +99,15 @@
 
 <script>
   export default {
-    name: 'home.vue'
+    name: 'home.vue',
+    beforeCreate () {
+      //获取token   注意是字符串键key
+      const token = localStorage.getItem('token')
+      if(!token) {
+        //token没有 =》回到登录
+        this.$router.push({name:'login'})
+      }
+    }
   }
 </script>
 
