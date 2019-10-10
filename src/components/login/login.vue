@@ -63,7 +63,7 @@
           } = res.data
           if(status === 200) {
             //登录成功
-            //保存token到浏览器，这样不登录也能够直接到home页面 
+            //保存token到浏览器，这样不登录也能够直接到home页面
             localStorage.setItem('token',data.token)
             // 跳转页面
             this.$router.push({name:'home'})
