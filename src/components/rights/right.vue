@@ -59,7 +59,7 @@
         // this.$http.defaults.headers.common['Authorization'] = localStorage.getItem('token')
         //type参数可以是list 表格形式用list  树形结构用tree
         const res = await this.$http.get(`rights/list`)
-        console.log(res)
+        // console.log(res)
         this.rightlist = res.data.data
 
       }
