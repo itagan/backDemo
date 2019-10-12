@@ -5,7 +5,8 @@ import Home from '../components/home/home'
 import Users from '../components/users/users'
 import Right from '../components/rights/right'
 import Role from '../components/rights/role'
-import { Message } from 'element-ui';
+import { Message } from 'element-ui'
+import Goodslist from '../components/goods/goodslist'
 
 Vue.use(Router)
 
@@ -34,7 +35,12 @@ const router = new Router({
           name:'roles',
           path:'/roles',  //el-menu-item index="rights" 需要匹配Index
           component:Role
-        }
+        },
+        {
+          name:'goods',
+          path:'goods',
+          component:Goodslist   //**component别加s**
+        },
       ]
     }
   ]

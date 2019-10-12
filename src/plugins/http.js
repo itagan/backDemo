@@ -9,7 +9,7 @@ MyHttpServer.install = (Vue) => {
   // 添加请求拦截器
   axios.interceptors.request.use(function (config) {
     // 在发送请求之前做些什么
-    console.log(config.url)
+    // console.log(config.url)
     if(config.url !== 'login') {
       //设置拦截
       const AUTH_TOKEN = localStorage.getItem('token')
