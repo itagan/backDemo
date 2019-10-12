@@ -86,12 +86,35 @@
            type="success"
            icon="el-icon-check"
            circle
-           @click="showSetUserRoleDia(scope.row)"
+           @click="showSetRightDia(scope.row)"
          ></el-button>
        </template>
      </el-table-column>
    </el-table>
+<!--  修改权限的对话框-->
+   <el-dialog title="修改权限" :visible.sync="dialogFormVisibleRight">
+<!--    树形结构   需要看看各项参数-->
+     <!-- 树形结构组件 -->
+     <!-- :data 用来指定当前这棵树，要绑定到的数据 -->
+     <!-- node-key 用来指定，每个节点，被选中时候，所选中的哪个值 -->
+     <!-- :props 用来指定每个节点的配置项 -->
+     <!--     比如，通过 label 指定要展示的名称 -->
+     <!--     比如，通过 children 属性指定 通过 哪个属性来实现嵌套 -->
+     <el-tree
+       ref = "tree"
+       :data="treelist"
+       show-checkbox
+       node-key="id"
+       default-expand-all
+       :default-checked-keys="arrcheck"
+       :props="defaultProps">
+     </el-tree>
 
+     <div slot="footer" class="dialog-footer">
+       <el-button @click="dialogFormVisibleRight = false">取 消</el-button>
+       <el-button type="primary" @click="setRoleRight()">确 定</el-button>
+     </div>
+   </el-dialog>
  </el-card>
 </template>
 
@@ -100,13 +123,75 @@
     name: 'role.vue',
     data() {
       return {
-        rolelist:[]
+        rolelist:[],
+        dialogFormVisibleRight:false,
+        treelist:[],
+        defaultProps: {
+          label:'authName',
+          children:'children'  //该节点所在子节点的数组
+        },
+        arrexpand:[],
+        arrcheck:[],
+        currRoleId:-1 //角色树形权限在对话框中，无法直接在方法里传参获取，所以这里定义来获取角色id
       }
     },
     created () {
       this.getRolelist()
     },
     methods: {
+      //修改角色权限，点击确定生效
+      async setRoleRight() {
+        //获取全选打钩的权限id
+        let arr1 = this.$refs.tree.getCheckedKeys()
+        //获取半选的权限id
+        let arr2 = this.$refs.tree.getHalfCheckedKeys()
+        let arr = [...arr1,...arr2]
+        console.log(arr)
+        //currRoleId已经通过打开对话框方法获取到了
+        const res = await this.$http.post(`roles/${this.currRoleId}/rights`, {
+          rids: arr.join(',')
+        })
+        //先更新视图再关闭对话框
+        this.getRolelist()
+        console.log(res)
+        if (res.data.meta.status !== 200) return this.$message.error('更新权限失败！')
+        this.$message.success('更新权限成功！')
+        this.dialogFormVisibleRight = false
+
+      },
+      //点击操作的check按钮，修改权限
+      async showSetRightDia(role) {
+        //给当前角色Id获取值
+        this.currRoleId = role.id
+        //先获取树形结构的数据
+        const res = await this.$http.get(`rights/tree`)
+        this.treelist = res.data.data
+        //通过遍历三层数组方式把所有Id值取得加入到空数组中
+        // var arrtemp1 = []
+        // this.treelist.forEach(item1 => {
+        //   arrtemp1.push(item1.id)
+        //   item1.children.forEach(item2 => {
+        //     arrtemp1.push(item2.id)
+        //     item2.children.forEach(item3 => {
+        //       arrtemp1.push(item3.id)
+        //     })
+        //   })
+        // })
+
+        //获取当前角色的权限id，放到数组中  注意只拿需要的打钩，所以有些不能放入数组
+        var arrtemp2 = []
+        role.children.forEach(item1 => {
+          // arrtemp2.push(item1.id)
+          item1.children.forEach(item2 => {
+            // arrtemp2.push(item2.id)
+            item2.children.forEach(item3 => {
+              arrtemp2.push(item3.id)
+            })
+          })
+        })
+        this.arrcheck = arrtemp2
+        this.dialogFormVisibleRight = true
+      },
       //取消权限
       async deleRight(role,rightId) {
         const res = await this.$http.delete(`roles/${role.id}/rights/${rightId}`)
