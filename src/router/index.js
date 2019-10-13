@@ -7,6 +7,7 @@ import Right from '../components/rights/right'
 import Role from '../components/rights/role'
 import { Message } from 'element-ui'
 import Goodslist from '../components/goods/goodslist'
+import Goodsadd from '../components/goods/goodsadd'
 
 Vue.use(Router)
 
@@ -40,6 +41,11 @@ const router = new Router({
           name:'goods',
           path:'goods',
           component:Goodslist   //**component别加s**
+        },
+        {
+          name:'goodsadd',
+          path:'goodsadd',
+          component:Goodsadd   //**component别加s**
         },
       ]
     }

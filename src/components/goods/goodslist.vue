@@ -16,7 +16,7 @@
             @click="searchGoods()"
           ></el-button>
         </el-input>
-        <el-button type="success">添加商品</el-button>
+        <el-button type="success" @click="addGood">添加商品</el-button>
       </el-col>
     </el-row>
     <!--    3.表格  默认自适应高度，可设置高度-->
@@ -107,6 +107,11 @@
       this.getGoodsList()
     },
     methods: {
+      //添加商品
+      addGood() {
+        this.$router.push({name:'goodsadd'})
+      },
+      //获取数据
       async getGoodsList() {
         const res = await this.$http.get(`goods?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
         console.log(res)
@@ -163,15 +168,15 @@
         console.log(`每页 ${val} 条`)
         this.pagesize = val
         this.pagenum = 1
-        this.getGoodsList()      },
+        this.getGoodsList()
+      },
       //当前页变化时触发
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`)
         this.pagenum = val
-        this.getGoodsList()      },
-
+        this.getGoodsList()    
+      },
     }
-
   }
 </script>
 
