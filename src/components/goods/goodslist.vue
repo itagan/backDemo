@@ -174,7 +174,7 @@
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`)
         this.pagenum = val
-        this.getGoodsList()    
+        this.getGoodsList()
       },
     }
   }

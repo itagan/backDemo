@@ -8,6 +8,7 @@ import Role from '../components/rights/role'
 import { Message } from 'element-ui'
 import Goodslist from '../components/goods/goodslist'
 import Goodsadd from '../components/goods/goodsadd'
+import Cateparams from '../components/goods/cateparams'
 
 Vue.use(Router)
 
@@ -46,6 +47,11 @@ const router = new Router({
           name:'goodsadd',
           path:'goodsadd',
           component:Goodsadd   //**component别加s**
+        },
+        {
+          name:'params',
+          path:'params',
+          component:Cateparams
         },
       ]
     }
