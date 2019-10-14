@@ -19,8 +19,8 @@
       </el-cascader>
     </el-form-item>
     </el-form>
-
-    <el-tabs v-model="activeName" @tab-click="handleClick">
+<!--    el-tabs v-model="active" 绑定选项卡中的name值，data中赋初始值-->
+    <el-tabs v-model="active" @tab-click="handleClick">
       <el-tab-pane label="动态参数" name="1">
         <el-button type="danger">设置动态参数</el-button>
         <el-table
@@ -79,7 +79,48 @@
 
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="静态参数" name="2"></el-tab-pane>
+<!--      静态参数-->
+      <el-tab-pane label="静态参数" name="2">
+        <el-button type="danger">设置静态参数</el-button>
+        <el-table
+        :data="arrStaticparams"
+        style="width: 100%">
+        <el-table-column type="index" label="#"></el-table-column>
+
+        <el-table-column
+          label="属性名称"
+          prop="attr_name">
+        </el-table-column>
+
+        <el-table-column
+          label="属性值"
+          prop="attr_vals">
+        </el-table-column>
+
+        <el-table-column
+          label="操作">
+          <template v-slot:default="scope">
+            <el-button
+              size="mini"
+              :plain="true"
+              type="primary"
+              icon="el-icon-edit"
+              circle
+              @click="showEditUserDia(scope.row)"
+            ></el-button>
+            <el-button
+              size="mini"
+              :plain="true"
+              type="danger"
+              icon="el-icon-delete"
+              circle
+              @click="showDeleUserMsgBox(scope.row.id)"
+            ></el-button>
+          </template>
+        </el-table-column>
+
+        </el-table>
+      </el-tab-pane>
     </el-tabs>
 
   </el-card>
@@ -101,7 +142,9 @@
         arrDyparams:[], //动态参数
         inputVisible: false,
         inputValue: '',
-
+        //静态参数
+        arrStaticparams:[],
+        active:'1'
       }
     },
     created() {
@@ -124,7 +167,6 @@
               item.attr_vals.length ? item.attr_vals.trim().split(','):[]
           })
         }
-
       },
       //获取商品三级分类数据
       async getGoodCate() {
@@ -134,8 +176,22 @@
         this.options = res.data.data
       },
       //切换tabs触发
-      handleClick() {
-
+      async handleClick() {
+        if (this.active === '2') {
+          if (this.selectedOptions.length === 3){
+            //获取静态参数
+            const res = await this.$http.get(
+              `categories/${this.selectedOptions[2]}/attributes`,
+              {
+                params: { sel: 'only' }
+              }
+            )
+            console.log(res)
+            this.arrStaticparams = res.data.data
+          }
+        }else {
+          console.log('有误')
+        }
       },
       //动态teg标签
       //点击x按钮
@@ -168,7 +224,7 @@
             attr_vals:attr_vals.join(',')   //发送给服务器不能直接是数组，应该连接成字符串，按要求分割
           }
           const res = await this.$http.put(`categories/${this.selectedOptions[2]}/attributes/${attr_id}`,putData)
-          console.log(res)
+          // console.log(res)
         }
         this.inputVisible = false;
         this.inputValue = '';
