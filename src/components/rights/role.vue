@@ -70,7 +70,7 @@
            type="primary"
            icon="el-icon-edit"
            circle
-           @click="showEditUserDia(scope.row)"
+           @click="showEditRoleDia(scope.row)"
          ></el-button>
          <el-button
            size="mini"
@@ -78,7 +78,7 @@
            type="danger"
            icon="el-icon-delete"
            circle
-           @click="showDeleUserMsgBox(scope.row.id)"
+           @click="showDeleRole(scope.row.id)"
          ></el-button>
          <el-button
            size="mini"
@@ -115,6 +115,39 @@
        <el-button type="primary" @click="setRoleRight()">确 定</el-button>
      </div>
    </el-dialog>
+
+   <!--弹出添加角色对话框-->
+   <el-dialog title="添加角色" :visible.sync="dialogFormVisibleEdit">
+     <el-form :model="form">
+       <el-form-item label="角色名称" label-width="100px">
+         <el-input v-model="form.roleName" autocomplete="off"></el-input>
+       </el-form-item>
+       <el-form-item label="角色描述" label-width="100px">
+         <el-input v-model="form.roleDesc" autocomplete="off"></el-input>
+       </el-form-item>
+
+     </el-form>
+     <div slot="footer" class="dialog-footer">
+       <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
+       <el-button type="primary" @click="editRole()">确 定</el-button>
+     </div>
+   </el-dialog>
+   <!--弹出编辑角色对话框-->
+   <el-dialog title="编辑角色" :visible.sync="dialogFormVisibleEditRole">
+     <el-form :model="form">
+       <el-form-item label="角色名称" label-width="100px">
+         <el-input v-model="form.roleName" autocomplete="off"></el-input>
+       </el-form-item>
+       <el-form-item label="角色描述" label-width="100px">
+         <el-input v-model="form.roleDesc" autocomplete="off"></el-input>
+       </el-form-item>
+
+     </el-form>
+     <div slot="footer" class="dialog-footer">
+       <el-button @click="dialogFormVisibleEditRole = false">取 消</el-button>
+       <el-button type="primary" @click="editRoleCon()">确 定</el-button>
+     </div>
+   </el-dialog>
  </el-card>
 </template>
 
@@ -125,6 +158,8 @@
       return {
         rolelist:[],
         dialogFormVisibleRight:false,
+        dialogFormVisibleEdit: false,
+        dialogFormVisibleEditRole:false,
         treelist:[],
         defaultProps: {
           label:'authName',
@@ -132,15 +167,30 @@
         },
         arrexpand:[],
         arrcheck:[],
-        currRoleId:-1 //角色树形权限在对话框中，无法直接在方法里传参获取，所以这里定义来获取角色id
+        currRoleId:-1, //角色树形权限在对话框中，无法直接在方法里传参获取，所以这里定义来获取角色id
+        form: {
+          id:'',
+          roleName:'',
+          roleDesc:''
+        }
       }
     },
     created () {
       this.getRolelist()
     },
     methods: {
+      //确定添加角色
+      async editRole() {
+        const res = await this.$http.post(`roles`,this.form)
+        console.log(res)
+        this.getRolelist()
+        this.dialogFormVisibleEdit = false
+      },
+      //弹出添加角色
       addrole() {
-        
+        this.dialogFormVisibleEdit = true
+        //开始的时候表单应该是空数据，由用户编辑操作
+        this.form = {}
       },
       //修改角色权限，点击确定生效
       async setRoleRight() {
@@ -149,14 +199,12 @@
         //获取半选的权限id
         let arr2 = this.$refs.tree.getHalfCheckedKeys()
         let arr = [...arr1,...arr2]
-        console.log(arr)
         //currRoleId已经通过打开对话框方法获取到了
         const res = await this.$http.post(`roles/${this.currRoleId}/rights`, {
           rids: arr.join(',')
         })
         //先更新视图再关闭对话框
         this.getRolelist()
-        console.log(res)
         if (res.data.meta.status !== 200) return this.$message.error('更新权限失败！')
         this.$message.success('更新权限成功！')
         this.dialogFormVisibleRight = false
@@ -205,9 +253,47 @@
         //优化，删除不应该更新整个视图，而是根据返回的数据更新当前角色的权限，达到删除可以看到删除效果，而不被删除的不会被刷新 所以传入是角色 为参数
         role.children = res.data.data
       },
+      //获取权限列表
       async getRolelist() {
         const res = await this.$http.get(`roles`)
         this.rolelist = res.data.data
+      },
+      //编辑角色
+      showEditRoleDia(role) {
+        this.dialogFormVisibleEditRole = true
+        this.form = role
+      },
+      //删除角色
+      showDeleRole(id) {
+        this.$confirm('删除该用户', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then( async () => {
+          const res = await this.$http.delete(`roles/${id}`)
+          console.log(res)
+          if(res.data.meta.status === 200) {
+            // 更新视图 提示删除成功
+            this.getRolelist()
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          }
+        }).catch((err) => {
+          console.log(err)
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      },
+      //确定编辑  这里不使用传参，直接从data取，准确取得对应值，避免意外错误
+      async editRoleCon(){
+          const res = await this.$http.put(`roles/${this.form.id}`,this.form)
+        console.log(res)
+        this.dialogFormVisibleEditRole = false
+        this.getRolelist()
       }
     }
   }

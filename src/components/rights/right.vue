@@ -6,7 +6,7 @@
 <!--      <el-breadcrumb-item>权限管理</el-breadcrumb-item>-->
 <!--      <el-breadcrumb-item>权限列表</el-breadcrumb-item>-->
 <!--    </el-breadcrumb>-->
-    <my-bread level1="权限管理" level2="权限列表"></my-bread>
+    <my-bread level1="权限管理" level2="权限列表" class="right"></my-bread>
 <!--    2表格-->
     <el-table
       height="400px"
@@ -68,5 +68,8 @@
 </script>
 
 <style scoped>
+  .right {
+    margin-bottom: 20px;
+  }
 
 </style>
