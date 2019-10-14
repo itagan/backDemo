@@ -5,7 +5,7 @@
 
    <el-row class="addrolebtn">
      <el-col>
-       <el-button type="info">添加角色</el-button>
+       <el-button type="info" @click="addrole()">添加角色</el-button>
      </el-col>
    </el-row>
 
@@ -139,6 +139,9 @@
       this.getRolelist()
     },
     methods: {
+      addrole() {
+        
+      },
       //修改角色权限，点击确定生效
       async setRoleRight() {
         //获取全选打钩的权限id
@@ -205,7 +208,6 @@
       async getRolelist() {
         const res = await this.$http.get(`roles`)
         this.rolelist = res.data.data
-
       }
     }
   }

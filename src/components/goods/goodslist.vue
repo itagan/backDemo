@@ -88,6 +88,28 @@
       :total="total">
     </el-pagination>
 
+    <!--弹出编辑对话框-->
+    <el-dialog title="添加用户" :visible.sync="dialogFormVisibleEdit">
+      <el-form :model="form">
+        <el-form-item label="商品名称" label-width="100px">
+          <el-input v-model="form.goods_name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="商品价格" label-width="100px">
+          <el-input v-model="form.goods_price" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="商品重量" label-width="100px">
+          <el-input v-model="form.goods_weight" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="商品数量" label-width="100px">
+          <el-input v-model="form.goods_number" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
+        <el-button type="primary" @click="editGoods()">确 定</el-button>
+      </div>
+    </el-dialog>
+
   </el-card>
 </template>
 
@@ -101,6 +123,15 @@
         pagenum:1,
         pagesize:10,
         total:-1,
+        //表单数据方便编辑提交
+        form: {
+          goods_id:'',
+          goods_name: '',
+          goods_price:'',
+          goods_weight: '',
+          goods_number:''
+        },
+        dialogFormVisibleEdit:false
       }
     },
     created () {
@@ -114,7 +145,7 @@
       //获取数据
       async getGoodsList() {
         const res = await this.$http.get(`goods?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
-        console.log(res)
+        // console.log(res)
         const {meta:{status,msg},data:{goods,total}} = res.data
         if(status === 200) {
           this.goodslist = goods
@@ -132,8 +163,19 @@
       loadGoodsList() {
         this.getGoodsList()
       },
-      showEditGoodsDia() {
-
+      showEditGoodsDia(goods) {
+        this.dialogFormVisibleEdit = true
+        //获取列表的数据再展示在对话框上
+        this.form = goods
+        console.log(goods)
+      },
+      //编辑操作
+      async editGoods() {
+        //点击确定提交修改数据
+        const res = await this.$http.put(`goods/${this.form.goods_id}`,this.form)
+        console.log(res)
+        this.dialogFormVisibleEdit = false
+        this.getGoodsList()
       },
       //删除提示框
       showDeleGoodsMsgBox(goods_id) {
